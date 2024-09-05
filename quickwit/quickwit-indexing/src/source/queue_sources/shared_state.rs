@@ -100,6 +100,7 @@ impl QueueSharedState {
                         source_id: source_id.clone(),
                         max_age,
                         max_count,
+                        interval: Some(pruning_interval.as_secs() as u32),
                     })
                     .await;
                 if let Err(err) = result {
