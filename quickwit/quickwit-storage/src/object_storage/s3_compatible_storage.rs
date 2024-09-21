@@ -371,7 +371,7 @@ impl S3CompatibleObjectStorage {
                 .create_multipart_upload()
                 .bucket(self.bucket.clone())
                 .key(key)
-                .server_side_encryption(encryption)
+                .server_side_encryption(ServerSideEncryption::Aes256)
                 .send()
                 .await
         })
