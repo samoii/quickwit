@@ -367,22 +367,13 @@ impl S3CompatibleObjectStorage {
 
     async fn create_multipart_upload(&self, key: &str) -> StorageResult<MultipartUploadId> {
         let upload_id = aws_retry(&self.retry_params, || async {
-            let mut create_multipart_req = self
-                .s3_client
+            self.s3_client
                 .create_multipart_upload()
                 .bucket(self.bucket.clone())
-                .key(key);
-            let (s3_sse, kms_key_id) = self.apply_server_side_encryption(
-                self.server_side_encryption,
-                self.sse_kms_key_id.clone(),
-            );
-            if let Some(encryption) = s3_sse {
-                create_multipart_req = create_multipart_req.server_side_encryption(encryption);
-                if let Some(kms_key_id) = kms_key_id {
-                    create_multipart_req = create_multipart_req.ssekms_key_id(kms_key_id);
-                }
-            }
-            create_multipart_req.send().await
+                .key(key)
+                .server_side_encryption(encryption)
+                .send()
+                .await
         })
         .await?
         .upload_id
