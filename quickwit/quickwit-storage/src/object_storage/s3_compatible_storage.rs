@@ -778,7 +778,9 @@ impl Storage for S3CompatibleObjectStorage {
         let _permit = REQUEST_SEMAPHORE.acquire().await;
         let key = self.key(path);
         let total_len = payload.len();
+        print!("total_len: {}", total_len);
         let part_num_bytes = self.multipart_policy.part_num_bytes(total_len);
+        print!("part_num_bytes: {}", part_num_bytes);
         if self.disable_multipart_upload || part_num_bytes >= total_len {
             self.put_single_part(&key, payload, total_len).await?;
         } else {
